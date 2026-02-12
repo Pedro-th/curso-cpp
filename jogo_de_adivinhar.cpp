@@ -1,8 +1,11 @@
 #include <iostream>
+#include <cstdlib>
+#include <ctime>
 using namespace std;
 
 int main () {
-    int numeroSecreto=42;
+    srand(time(NULL));
+    int numeroSecreto=(rand() % 100) + 1;
     int chute=0,tentativas=0,numero_de_tentativas=0;
     double pontuacao = 1000;
     char dificuldade;
@@ -12,7 +15,6 @@ int main () {
     cout << "********************************* \n";
     cout << "qual nivel de difculdade vc quer (f/m/d): ";
     cin >> dificuldade;
-    
     if (dificuldade == 'f') {
         numero_de_tentativas = 15;
     } else if (dificuldade == 'm') {
