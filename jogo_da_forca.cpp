@@ -1,12 +1,32 @@
 #include <iostream>
 #include <map>
 #include <vector>
+#include <fstream>
+#include <ctime>
+#include <cstdlib>
 using namespace std;
-string palavra_secreta = "melancia";
+string palavra_secreta = " ";
 //dicionario em c++
 map<char,bool> chutou;
 //vetor dinamico
 vector<char> chutes_errados;
+
+
+void salva_arquivo (vector <string> nova_lista) {
+    ofstream arquivo;
+    arquivo.open("tripulantes.txt");
+    if (arquivo.is_open()) {
+        arquivo << nova_lista.size() << endl;
+        for (string palavra : nova_lista) {
+            arquivo << palavra << endl;
+        } 
+        arquivo.close();
+        
+    }
+    else {
+            cout << "não foi possivel acessar o banco de palavras";
+        }
+}
 
 bool letra_pertencente (char chute, string palavra) {
     int i;
@@ -32,15 +52,51 @@ bool nao_enforcou () {
     return chutes_errados.size() < 5;
 }
 
+vector <string> ler_arquivo() {
+    int i;
+    ifstream arquivo("tripulantes.txt");
+    int quantidade_de_palavras;
+    arquivo >> quantidade_de_palavras;
+    vector<string> tripulantes;
+
+    for (i=0; i < quantidade_de_palavras; i++) {
+        string palavra_lida;
+        arquivo >> palavra_lida;
+        tripulantes.push_back(palavra_lida);
+    }
+    arquivo.close();
+    return tripulantes;
+}
+
+void sorteia_palavra () {
+    vector <string> palavras = ler_arquivo();
+    srand(time(NULL));
+    int indice_sorteio = rand() % palavras.size();
+    palavra_secreta = palavras[indice_sorteio];
+}
+
+void adiciona_palavra () {
+    cout << "digite um novo tripulante: ";
+    string novo_tripulante;
+    cin >> novo_tripulante;
+    vector <string> lista_palavras = ler_arquivo();
+    lista_palavras.push_back(novo_tripulante);
+    salva_arquivo(lista_palavras);
+}
+
+
+
 
 
 int main () {
     cout << "*******************************\n";
-    cout << "******* jogo da forca *********\n";
+    cout << "******* advinhe o tripulante *********\n";
     cout << "*******************************\n";
 
 char chute;
 
+ler_arquivo ();
+sorteia_palavra();
 while (nao_acertou() && nao_enforcou()) {
     cout << "chutes errados: ";
     for (char letra : chutes_errados) {
@@ -75,6 +131,12 @@ while (nao_acertou() && nao_enforcou()) {
         cout << "vc perdeu, tente novamente";
     } else {
         cout << "parabens, vc ganhou";
+        cout << "vc deseja adicionar uma nova palavra ao ao banco?(s/n) :";
+        char escolha;
+        cin >> escolha;
+        if (escolha == 's') {
+            adiciona_palavra();
+        }
     }
 
 
